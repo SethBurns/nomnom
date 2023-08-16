@@ -1,21 +1,8 @@
-console.log('Hello World!!')
-import knex from 'knex'
-import dotenv from 'dotenv'
-import path from 'path'
+import knex from 'knex';
+import config from './knexfile';
 
-dotenv.config({ path: path.resolve('..', '.env') })
-const pg = knex({
-  client: 'pg',
-  connection: {
-    host: 'localhost',
-    port: 5432,
-    user: process.env.PG_USER,
-    database: 'nomnom',
-    password: process.env.PG_PASSWORD,
-    // ssl: config["DB_SSL"] ? { rejectUnauthorized: false } : false,
-  }
-});
+const pg = knex(config.development);
 
 const result = pg('ingredients')
   .first()
-  .then(res => console.log(res))
+  .then((res) => console.log(res));
