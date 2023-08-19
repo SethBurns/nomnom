@@ -19,8 +19,7 @@ export async function fetchSingleIngredient(id: number) {
   if (!response.ok) {
     throw new Error(response.statusText)
   }
-  const data = await response.json()
-  return data
+  return response.json()
 }
 
 export async function postNewIngredient(body: Omit<Ingredient, 'id'>) {
@@ -32,6 +31,5 @@ export async function postNewIngredient(body: Omit<Ingredient, 'id'>) {
   if (!response.ok) {
     throw new Error(response.statusText)
   }
-  const data = await response.json()
-  return data
+  return response.json()
 }
