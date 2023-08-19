@@ -6,9 +6,9 @@ export async function seed(knex: Knex): Promise<void> {
 
     // Inserts seed entries
     await knex("ingredients").insert([
-      { name: "Celery", unit: "gram", protein: "1g" },
-      { name: "Onion", unit: "gram", protein: "2g" },
-      { name: "Green pepper", unit: "gram", protein: "3g" },
-      { name: "Carrot", unit: "gram", protein: "4g" },
+      { name: "Celery", protein_in_grams: 1, carbs_in_grams: 1, fat_in_grams: 0, mass_in_grams: 10 },
+      { name: "Onion", protein_in_grams: 2, carbs_in_grams: 1, fat_in_grams: 0, mass_in_grams: 10 },
+      { name: "Green pepper", protein_in_grams: 3, carbs_in_grams: 1, fat_in_grams: 0, mass_in_grams: 10 },
+      { name: "Carrot", protein_in_grams: 4, carbs_in_grams: 1, fat_in_grams: 0, mass_in_grams: 10 },
     ]);
 };
