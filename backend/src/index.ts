@@ -8,7 +8,7 @@ const pg = knex(config.development);
 const app = express();
 const port = 3000;
 
-interface Ingredient {
+export interface Ingredient {
   id: number;
   name: string;
   unit: string;
