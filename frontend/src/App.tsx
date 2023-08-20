@@ -1,6 +1,8 @@
 import React from 'react';
 import './App.css';
 import { Ingredients } from './components/Ingredients/Ingredients';
+import { AddIngredientForm } from './components/AddIngredientForm/AddIngredientForm';
+
 
 function App() {
   return (
@@ -13,6 +15,7 @@ function App() {
       </header>
       <main>
         <Ingredients />
+        <AddIngredientForm />
       </main>
     </div>
   );

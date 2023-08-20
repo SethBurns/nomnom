@@ -1,8 +1,10 @@
-interface Ingredient {
+export interface Ingredient {
   id: number;
   name: string;
-  unit: string;
-  protein: string;
+  protein_in_grams: string;
+  carbs_in_grams: string;
+  fat_in_grams: string;
+  mass_in_grams: string;
 }
 
 export async function fetchAllIngredients() {
