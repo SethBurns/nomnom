@@ -3,7 +3,7 @@ import './AddIngredientForm.css'
 export function AddIngredientForm() {
 
   return (
-    <form className='ingredient-form'>
+    <form className='flex column items-center'>
       <label htmlFor='ingredientName'>Ingredient Name: </label>
       <input type='text' placeholder='ex. White Rice' name='ingredientName'></input>
       <label htmlFor='proteinGrams'>Protein Grams: </label>

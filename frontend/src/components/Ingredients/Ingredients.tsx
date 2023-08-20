@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Ingredient, fetchAllIngredients } from '../apiCalls';
-import './Ingredients.css';
+import '../../'
 
 export function Ingredients() {
   const [ingredients, setIngredients] = useState(Array<Ingredient>);
@@ -22,7 +22,7 @@ export function Ingredients() {
   });
 
   return (
-    <table className='ingredient-table'>
+    <table className='table items-center'>
       <tbody>
         <tr>
           <th>Name</th>

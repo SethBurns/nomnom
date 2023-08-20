@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import { Ingredients } from './components/Ingredients/Ingredients';
-import { AddIngredientForm } from './components/AddIngredientForm/AddIngredientForm';
+import { AddIngredientForm } from './components/AddIngredientForm/AddIngredientForm'; 
 
 
 function App() {
