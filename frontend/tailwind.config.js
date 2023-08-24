@@ -2,8 +2,17 @@
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
-    extend: {},
+    extend: {
+      keyframes: {
+        'fadeInOut': {
+          '0%, 100%': { opacity: '0' },
+          '50%': { opacity: '1' },
+        },
+      },
+      animation: {
+        'fadeInOut': 'fadeInOut 5s ease-in-out 1',
+      },
+    },
+    plugins: [],
   },
-  plugins: [],
-}
-
+};

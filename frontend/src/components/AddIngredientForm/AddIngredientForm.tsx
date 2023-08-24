@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { Ingredient, postNewIngredient } from '../apiCalls';
 import { toTitleCase } from '../util';
 import noImage from '../../images/oliver-twist.png';
@@ -31,17 +31,19 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
     }
   }
 
+  useEffect(() => {
+    if (postError) {
+      setTimeout(() => {
+        setPostError('');
+      }, 5000);
+    }
+  }, [postError])
+
   function renderNoImage() {
     if (imgUrl === '') {
       return noImage;
     } else {
       return imgUrl;
-    }
-  }
-
-  function renderError() {
-    if (postError) {
-      return <p className="text-red-500">{postError}</p>;
     }
   }
 
@@ -209,12 +211,9 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
         <button type="submit" className="border border-black p-1 m-2 rounded">
           Submit
         </button>
+        <p className={postError ? "text-red-500 text-center opacity-0" : "text-red-500 text-center opacity-0 animate-fadeInOut"}>{postError}</p>
       </form>
       <div className="flex flex-col flex-wrap w-1/3 p-px m-3 border-2 border-solid border-black">
-        {postError.length ? (
-          renderError()
-        ) : (
-          <div>
             <h2 className="text-2xl text-center">Preview</h2>
             <ul className="flex flex-col text-left">
               <li className="p-2">Name: {name}</li>
@@ -236,8 +235,6 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
               </li>
             </ul>
           </div>
-        )}
-      </div>
     </section>
   );
 }
