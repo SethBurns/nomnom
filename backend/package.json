@@ -9,6 +9,7 @@
     "dev": "nodemon src/index.ts",
     "migrate:latest": "knex migrate:latest --knexfile=./src/knexfile.ts",
     "seed:run": "knex seed:run --knexfile=./src/knexfile.ts",
+    "migrate:make": "npx knex migrate:make --knexfile=./src/knexfile.ts",
     "db:update": "npm run migrate:latest && npm run seed:run"
   },
   "author": "",
