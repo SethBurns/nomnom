@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 interface Props {
   ingredients: Array<Ingredient>;
-  setIngredients: Function;
+  setIngredients: (ingredients: Array<Ingredient>) => void;
 }
 
 export function Ingredients({ ingredients, setIngredients }: Props) {
