@@ -5,6 +5,9 @@ export interface Ingredient {
   carbs_in_grams: string;
   fat_in_grams: string;
   mass_in_grams: string;
+  fiber_in_grams: string;
+  calories: string;
+  img_url: string;
 }
 
 export async function fetchAllIngredients() {
