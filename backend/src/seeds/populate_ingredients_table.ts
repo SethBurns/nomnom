@@ -1,16 +1,10 @@
 import { Knex } from 'knex';
 
 export async function seed(knex: Knex): Promise<void> {
-  
-  await knex('ingredients').del();
-  // reset the auto incrementing id
-  await knex.raw('TRUNCATE TABLE ingredients RESTART IDENTITY CASCADE')
-
-  await knex('recipes').del();
-  // reset the auto incrementing id
-  await knex.raw('TRUNCATE TABLE recipes RESTART IDENTITY CASCADE')
-
-  await knex('recipe_ingredients').del();
+  // delete entries and reset id counter to 1
+  await knex.raw("TRUNCATE TABLE ingredients RESTART IDENTITY CASCADE");
+  await knex.raw("TRUNCATE TABLE recipes RESTART IDENTITY CASCADE");
+  await knex("recipe_ingredients").del();
 
   // Inserts seed entries
   await knex('ingredients').insert([
