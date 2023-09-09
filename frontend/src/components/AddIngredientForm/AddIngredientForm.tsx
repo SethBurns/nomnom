@@ -5,7 +5,7 @@ import noImage from '../../images/oliver-twist.png';
 
 interface Props {
   ingredients: Array<Ingredient>;
-  setIngredients: Function;
+  setIngredients: (ingredients: Array<Ingredient>) => void;
 }
 
 export function AddIngredientForm({ ingredients, setIngredients }: Props) {
@@ -18,6 +18,7 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
   const [calories, setCalories] = useState('0');
   const [imgUrl, setImgUrl] = useState('');
   const [postError, setPostError] = useState('');
+  const [errorColor, setErrorColor] = useState('text-red-500');
 
   interface returnObject {
     id: number;
@@ -35,7 +36,7 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
     if (postError) {
       setTimeout(() => {
         setPostError('');
-      }, 5000);
+      }, 7000);
     }
   }, [postError])
 
@@ -50,7 +51,8 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (name === '' || mass === '0' || imgUrl === '') {
-      setPostError('Please fill out all fields');
+      setErrorColor('text-red-500');
+      setPostError('Image URL, Mass, and Name are required fields.');
       return;
     }
 
@@ -69,6 +71,8 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
       .catch((err) =>
         setPostError(`Something went wrong posting: ${err.message}`)
       );
+    setErrorColor('text-green-500');
+    setPostError('Your ingredient has been added!')
     setName('');
     setProtein('0');
     setCarbs('0');
@@ -211,7 +215,7 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
         <button type="submit" className="border border-black p-1 m-2 rounded">
           Submit
         </button>
-        <p className={postError ? "text-red-500 text-center opacity-0" : "text-red-500 text-center opacity-0 animate-fadeInOut"}>{postError}</p>
+        <p className={postError && `${errorColor} text-center animate-fadeInOut`}>{postError}</p>
       </form>
       <div className="flex flex-col flex-wrap w-1/3 p-px m-3 border-2 border-solid border-black">
             <h2 className="text-2xl text-center">Preview</h2>

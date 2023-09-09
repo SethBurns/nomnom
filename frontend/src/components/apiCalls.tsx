@@ -38,3 +38,12 @@ export async function postNewIngredient(body: Omit<Ingredient, 'id'>) {
   }
   return response.json();
 }
+
+export async function fetchAllRecipes() {
+  const response = await fetch('http://localhost:3000/recipes/1');
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+  const data = await response.json();
+  return data;
+}

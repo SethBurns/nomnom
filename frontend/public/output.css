@@ -658,7 +658,7 @@ video {
     opacity: 0;
   }
 
-  50% {
+  30%, 70% {
     opacity: 1;
   }
 }
@@ -668,14 +668,14 @@ video {
     opacity: 0;
   }
 
-  50% {
+  30%, 70% {
     opacity: 1;
   }
 }
 
 .animate-fadeInOut {
-  -webkit-animation: fadeInOut 5s ease-in-out 1;
-          animation: fadeInOut 5s ease-in-out 1;
+  -webkit-animation: fadeInOut 7s ease-in-out 1;
+          animation: fadeInOut 7s ease-in-out 1;
 }
 
 .cursor-pointer {
@@ -780,10 +780,6 @@ video {
 .text-red-500 {
   --tw-text-opacity: 1;
   color: rgb(239 68 68 / var(--tw-text-opacity));
-}
-
-.opacity-0 {
-  opacity: 0;
 }
 
 .hover\:bg-green-400:hover {

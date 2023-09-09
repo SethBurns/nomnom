@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Ingredients } from './components/Ingredients/Ingredients';
 import { AddIngredientForm } from './components/AddIngredientForm/AddIngredientForm';
-import { Ingredient, fetchAllIngredients } from './components/apiCalls';
+import { Ingredient, fetchAllIngredients, fetchAllRecipes } from './components/apiCalls';
 import { Route, Routes, NavLink } from 'react-router-dom';
+import { Recipes, Recipe } from './components/Recipes/Recipes';
+
 
 function App() {
   const [ingredients, setIngredients] = useState(Array<Ingredient>);
   const [page, setPage] = useState('addIngredient');
+  const [recipes, setRecipes] = useState(Array<Recipe>);
 
   useEffect(() => {
     fetchAllIngredients().then((data) => setIngredients(data));
+    fetchAllRecipes().then((data) => setRecipes(data));
   }, []);
 
   return (
@@ -23,6 +27,14 @@ function App() {
               onClick={() => setPage('addIngredient')}
             >
               Add Ingredient
+            </button>
+          </NavLink>
+          <NavLink to="/recipes">
+            <button
+              className="cursor-pointer border-2 border-black p-2 m-2 rounded hover:bg-orange-400"
+              onClick={() => setPage('recipes')}
+            >
+              Recipes
             </button>
           </NavLink>
           <NavLink to="/">
@@ -54,6 +66,10 @@ function App() {
                 setIngredients={setIngredients}
               />
             }
+          ></Route>
+          <Route
+            path="/recipes"
+            element={<Recipes recipes={recipes} setRecipes={setRecipes} />}
           ></Route>
         </Routes>
       </main>

@@ -56,10 +56,11 @@ export async function seed(knex: Knex): Promise<void> {
       instructions: JSON.stringify(['Add stone', 'Add water', 'Boil']),
     },
   ]);
-  // await knex('recipe_ingredients').insert([
-  //   { recipe_id: 1, ingredient_id: 1 },
-  //   { recipe_id: 1, ingredient_id: 2 },
-  //   { recipe_id: 1, ingredient_id: 3 },
-  //   { recipe_id: 1, ingredient_id: 4 },
-  // ]);
+  
+  await knex('recipe_ingredients').insert([
+    { recipe_id: 1, ingredient_id: 1 },
+    { recipe_id: 1, ingredient_id: 2 },
+    { recipe_id: 1, ingredient_id: 3 },
+    { recipe_id: 1, ingredient_id: 4 },
+  ]);
 }
