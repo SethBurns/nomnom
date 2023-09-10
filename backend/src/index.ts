@@ -2,6 +2,7 @@ import knex from 'knex';
 import config from './knexfile';
 import express from 'express';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 
 const pg = knex(config.development);
 
@@ -11,11 +12,33 @@ const port = 3000;
 interface Ingredient {
   id: number;
   name: string;
-  unit: string;
-  protein: string;
+  protein_in_grams: string;
+  carbs_in_grams: string;
+  fat_in_grams: string;
+  mass_in_grams: string;
+  fiber_in_grams: string;
+  calories: string;
+  img_url: string;
+}
+
+// improve this type later
+type RecipeWithIngredient = Recipe &
+  Ingredient & {
+    ingredient_name: string;
+    recipe_name: string;
+    recipe_id: number;
+    ingredient_id: number;
+  };
+
+interface Recipe {
+  id: number;
+  name: string;
+  instructions: string[];
 }
 
 app.use(bodyParser.json());
+app.use(cors());
+app.use(express.json());
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
@@ -51,6 +74,68 @@ app.patch('/ingredients/:id', async (req, res) => {
   // Fix this when you update the table you idiots.
   const patchResponse = await pg<Ingredient>('ingredients')
     .where({ id: parseInt(req.params.id) })
-    .update(req.body as Partial<Ingredient>, ['id', 'name', 'unit', 'protein']);
+    .update(req.body as Partial<Ingredient>, [
+      'id',
+      'name',
+      'protein_in_grams',
+      'carbs_in_grams',
+      'fat_in_grams',
+      'mass_in_grams',
+    ]);
   res.status(200).json(patchResponse[0]);
+});
+
+app.get('/recipes/:id', async (req, res) => {
+  // alias recipes name column as recipe_name
+  const recipeWithIngredients = (await pg<RecipeWithIngredient>('recipes')
+    .select(
+      '*',
+      'recipes.name as recipe_name',
+      'ingredients.name as ingredient_name'
+    )
+    .where('recipes.id', req.params.id)
+    .join('recipe_ingredients', 'recipes.id', 'recipe_ingredients.recipe_id')
+    .join(
+      'ingredients',
+      'recipe_ingredients.ingredient_id',
+      'ingredients.id'
+    )) as RecipeWithIngredient[];
+  const recipe = recipeWithIngredients.reduce((acc, curr) => {
+    acc.ingredients = acc.ingredients || [];
+    acc.ingredients.push({
+      id: curr.ingredient_id,
+      name: curr.name,
+      calories: curr.calories,
+      carbs_in_grams: curr.carbs_in_grams,
+      fat_in_grams: curr.fat_in_grams,
+      fiber_in_grams: curr.fiber_in_grams,
+      protein_in_grams: curr.protein_in_grams,
+      mass_in_grams: curr.mass_in_grams,
+      img_url: curr.img_url,
+    });
+
+    return {
+      ...acc,
+      recipe_id: curr.recipe_id,
+      name: curr.recipe_name,
+      instructions: curr.instructions,
+    };
+  }, {} as { recipe_id: number; name: string; instructions: string[]; ingredients: Ingredient[] });
+  res.json(recipe);
+});
+
+app.get('/recipes', async (req, res) => {
+  const recipes = await pg<Recipe>('recipes');
+  res.json(recipes);
+});
+
+//     return {...acc, recipe_id: curr.recipe_id, name: 'string', instructions: curr.instructions};
+//   },
+//   {} as { recipe_id: number; name: string; instructions: string[]; ingredients: Ingredient[] });
+//   res.json(recipe);
+// });
+
+app.post('/recipes', async (req, res) => {
+  const insertResult = await pg<Recipe>('recipes').insert(req.body, ['id']);
+  res.status(201).json(insertResult[0]);
 });
