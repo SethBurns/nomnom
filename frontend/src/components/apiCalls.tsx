@@ -40,10 +40,18 @@ export async function postNewIngredient(body: Omit<Ingredient, 'id'>) {
 }
 
 export async function fetchAllRecipes() {
-  const response = await fetch('http://localhost:3000/recipes/1');
+  const response = await fetch('http://localhost:3000/recipes');
   if (!response.ok) {
     throw new Error(response.statusText);
   }
   const data = await response.json();
   return data;
+}
+
+export async function fetchSingleRecipe(id: number) {
+  const response = await fetch(`http://localhost:3000/recipes/${id}`);
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+  return response.json();
 }

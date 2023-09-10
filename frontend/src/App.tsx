@@ -1,21 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { Ingredients } from './components/Ingredients/Ingredients';
 import { AddIngredientForm } from './components/AddIngredientForm/AddIngredientForm';
-import { Ingredient, fetchAllIngredients, fetchAllRecipes } from './components/apiCalls';
+import {
+  Ingredient,
+  fetchAllIngredients,
+  fetchAllRecipes,
+} from './components/apiCalls';
 import { Route, Routes, NavLink } from 'react-router-dom';
 import { Recipes, Recipe } from './components/Recipes/Recipes';
-
+import { SingleRecipe } from './components/SingleRecipe/SingleRecipe';
 
 function App() {
-  const [ingredients, setIngredients] = useState(Array<Ingredient>);
+  const [ingredients, setIngredients] = useState<Array<Ingredient>>([]);
   const [page, setPage] = useState('addIngredient');
-  const [recipes, setRecipes] = useState(Array<Recipe>);
+  const [recipes, setRecipes] = useState<Array<Recipe>>([]);
 
   useEffect(() => {
     fetchAllIngredients().then((data) => setIngredients(data));
     fetchAllRecipes().then((data) => setRecipes(data));
   }, []);
-
+  console.log(recipes);
   return (
     <div className="flex flex-col items-center w-screen">
       <header className="flex flex-col items-center">
@@ -70,6 +74,10 @@ function App() {
           <Route
             path="/recipes"
             element={<Recipes recipes={recipes} setRecipes={setRecipes} />}
+          ></Route>
+          <Route
+            path="/recipes/:id"
+            element={<SingleRecipe />}
           ></Route>
         </Routes>
       </main>

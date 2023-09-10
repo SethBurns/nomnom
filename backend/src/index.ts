@@ -24,6 +24,8 @@ interface Ingredient {
 // improve this type later
 type RecipeWithIngredient = Recipe &
   Ingredient & {
+    ingredient_name: string;
+    recipe_name: string;
     recipe_id: number;
     ingredient_id: number;
   };
@@ -84,11 +86,20 @@ app.patch('/ingredients/:id', async (req, res) => {
 });
 
 app.get('/recipes/:id', async (req, res) => {
+  // alias recipes name column as recipe_name
   const recipeWithIngredients = (await pg<RecipeWithIngredient>('recipes')
+    .select(
+      '*',
+      'recipes.name as recipe_name',
+      'ingredients.name as ingredient_name'
+    )
     .where('recipes.id', req.params.id)
     .join('recipe_ingredients', 'recipes.id', 'recipe_ingredients.recipe_id')
-    .join('ingredients', 'recipe_ingredients.ingredient_id', 'ingredients.id') as RecipeWithIngredient[])
-  console.log(recipeWithIngredients);
+    .join(
+      'ingredients',
+      'recipe_ingredients.ingredient_id',
+      'ingredients.id'
+    )) as RecipeWithIngredient[];
   const recipe = recipeWithIngredients.reduce((acc, curr) => {
     acc.ingredients = acc.ingredients || [];
     acc.ingredients.push({
@@ -101,35 +112,22 @@ app.get('/recipes/:id', async (req, res) => {
       protein_in_grams: curr.protein_in_grams,
       mass_in_grams: curr.mass_in_grams,
       img_url: curr.img_url,
-    }) 
+    });
 
-
-    return {...acc, recipe_id: curr.recipe_id, name: 'string', instructions: curr.instructions};
-  },
-  {} as { recipe_id: number; name: string; instructions: string[]; ingredients: Ingredient[] });
+    return {
+      ...acc,
+      recipe_id: curr.recipe_id,
+      name: curr.recipe_name,
+      instructions: curr.instructions,
+    };
+  }, {} as { recipe_id: number; name: string; instructions: string[]; ingredients: Ingredient[] });
   res.json(recipe);
 });
 
-// app.get('/recipes', async (req, res) => {
-//   const recipeWithIngredients = (await pg<RecipeWithIngredient>('recipes')
-//     .join('recipe_ingredients', 'recipes.id', 'recipe_ingredients.recipe_id')
-//     .join('ingredients', 'recipe_ingredients.ingredient_id', 'ingredients.id') as RecipeWithIngredient[])
-//   console.log(recipeWithIngredients);
-//   const allRecipes
-//   const recipe = recipeWithIngredients.reduce((acc, curr) => {
-//     acc.ingredients = acc.ingredients || [];
-//     acc.ingredients.push({
-//       id: curr.ingredient_id,
-//       name: curr.name,
-//       calories: curr.calories,
-//       carbs_in_grams: curr.carbs_in_grams,
-//       fat_in_grams: curr.fat_in_grams,
-//       fiber_in_grams: curr.fiber_in_grams,
-//       protein_in_grams: curr.protein_in_grams,
-//       mass_in_grams: curr.mass_in_grams,
-//       img_url: curr.img_url,
-//     }) 
-
+app.get('/recipes', async (req, res) => {
+  const recipes = await pg<Recipe>('recipes');
+  res.json(recipes);
+});
 
 //     return {...acc, recipe_id: curr.recipe_id, name: 'string', instructions: curr.instructions};
 //   },
