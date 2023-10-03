@@ -15,6 +15,9 @@ interface Ingredient {
   protein: string;
 }
 
+type RecipeWithIngredient = any;
+type Recipe = any;
+
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
