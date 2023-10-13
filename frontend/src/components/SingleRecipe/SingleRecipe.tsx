@@ -16,7 +16,6 @@ export function SingleRecipe() {
     return <h1 className="animate-pulse">Loading...</h1>;
   }
 
-  console.log(recipe.ingredients);
   return (
     <div>
       <h1>{recipe.name}</h1>

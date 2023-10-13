@@ -13,50 +13,41 @@ import AddRecipeForm from './components/AddRecipeForm/AddRecipeForm';
 
 function App() {
   const [ingredients, setIngredients] = useState<Array<Ingredient>>([]);
-  const [page, setPage] = useState('addIngredient');
   const [recipes, setRecipes] = useState<Array<Recipe>>([]);
 
   useEffect(() => {
     fetchAllIngredients().then((data) => setIngredients(data));
     fetchAllRecipes().then((data) => setRecipes(data));
   }, []);
-  console.log('recipes:', recipes);
+
   return (
     <div className="flex flex-col items-center w-screen">
       <header className="flex flex-col items-center">
         <h1 className="text-4xl my-4">nOmNoM</h1>
         <nav className="flex w-screen justify-evenly border-b border-black">
-          <NavLink to="/addIngredient">
-            <button
-              className="cursor-pointer border-2 border-black p-2 m-2 rounded hover:bg-green-400"
-              onClick={() => setPage('addIngredient')}
-            >
-              Add Ingredient
-            </button>
+          <NavLink
+            to="/addIngredient"
+            className="cursor-pointer border-2 border-black p-2 m-2 rounded hover:bg-green-400"
+          >
+            Add Ingredient
           </NavLink>
-          <NavLink to="/recipes">
-            <button
-              className="cursor-pointer border-2 border-black p-2 m-2 rounded hover:bg-orange-400"
-              onClick={() => setPage('recipes')}
-            >
-              Recipes
-            </button>
+          <NavLink
+            to="/recipes"
+            className="cursor-pointer border-2 border-black p-2 m-2 rounded hover:bg-orange-400"
+          >
+            Recipes
           </NavLink>
-          <NavLink to="/addRecipe">
-            <button
-              className="cursor-pointer border-2 border-black p-2 m-2 rounded hover:bg-blue-400"
-              onClick={() => setPage('addRecipe')}
-            >
-              Add Recipe
-            </button>
+          <NavLink
+            to="/addRecipe"
+            className="cursor-pointer border-2 border-black p-2 m-2 rounded hover:bg-blue-400"
+          >
+            Add Recipe
           </NavLink>
-          <NavLink to="/">
-            <button
-              className="cursor-pointer border-2 border-black p-2 m-2 rounded  hover:bg-purple-400"
-              onClick={() => setPage('ingredients')}
-            >
-              Ingredients
-            </button>
+          <NavLink
+            to="/"
+            className="cursor-pointer border-2 border-black p-2 m-2 rounded  hover:bg-purple-400"
+          >
+            Ingredients
           </NavLink>
         </nav>
       </header>
@@ -88,10 +79,7 @@ function App() {
             path="/recipes"
             element={<Recipes recipes={recipes} setRecipes={setRecipes} />}
           ></Route>
-          <Route
-            path="/recipes/:id"
-            element={<SingleRecipe />}
-          ></Route>
+          <Route path="/recipes/:id" element={<SingleRecipe />}></Route>
         </Routes>
       </main>
     </div>
