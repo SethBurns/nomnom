@@ -13,10 +13,11 @@ export async function up(knex: Knex): Promise<void> {
 
 export async function down(knex: Knex): Promise<void> {
   return knex.schema.alterTable('ingredients', function (table) {
-    table.string('protein', 255).alter();
-    table.dropColumn('carbs');
-    table.dropColumn('fat');
-    table.string('unit', 255).notNullable();
+    table.dropColumn('protein_in_grams');
+    table.string('protein', 255).nullable();
+    table.dropColumn('carbs_in_grams');
+    table.dropColumn('fat_in_grams');
+    table.string('unit', 255).nullable();
     table.dropColumn('mass_in_grams');
   });
 }
