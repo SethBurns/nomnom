@@ -99,7 +99,6 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
           <input
             value={name}
             onChange={(e) => {
-              console.log('h');
               setName(toTitleCase(e.target.value));
             }}
             className="w-52 text-center"
