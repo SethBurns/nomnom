@@ -116,6 +116,7 @@ app.get('/recipes/:id', async (req, res) => {
       protein_in_grams: curr.protein_in_grams,
       mass_in_grams: curr.mass_in_grams,
       img_url: curr.img_url,
+      quantity_in_grams: curr.quantity_in_grams,
     });
 
     return {
@@ -133,24 +134,16 @@ app.get('/recipes', async (req, res) => {
   res.json(recipes);
 });
 
-//     return {...acc, recipe_id: curr.recipe_id, name: 'string', instructions: curr.instructions};
-//   },
-//   {} as { recipe_id: number; name: string; instructions: string[]; ingredients: Ingredient[] });
-//   res.json(recipe);
-// });
-
 app.post('/recipes', async (req, res) => {
   const body: {
     name: string,
     instructions: string[],
     ingredients: {id: number, quantity: number}[]
   } = req.body;
-  console.log('body', body)
-  const result = await pg.transaction((trx) => {
+  await pg.transaction((trx) => {
     return trx<any>('recipes')
       .insert({name: body.name, instructions: JSON.stringify(body.instructions)}, ['id'])
       .then((insertResult) => {
-        console.log('insertResult', insertResult)
         const recipeIngredients = body.ingredients.map((ingredient) => ({
           recipe_id: insertResult[0].id,
           ingredient_id: ingredient.id,
@@ -159,7 +152,6 @@ app.post('/recipes', async (req, res) => {
         return trx('recipe_ingredients').insert(recipeIngredients);
       });
   })
-  console.log('result', result)
-  // const insertResult = await pg<Recipe>('recipes').insert(req.body, ['id']);
+
   res.status(201);
 });

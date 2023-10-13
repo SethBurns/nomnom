@@ -1,9 +1,12 @@
-import { Link } from 'react-router-dom';
-import { Ingredient } from '../apiCalls';
+import { Link } from "react-router-dom";
+import { Ingredient } from "../apiCalls";
+
+type RecipeIngredient = Ingredient & { quantity_in_grams: string };
+
 export interface Recipe {
   id: number;
   name: string;
-  ingredients: Array<Ingredient>;
+  ingredients: Array<RecipeIngredient>;
   instructions: string[];
 }
 
