@@ -22,19 +22,23 @@ interface Ingredient {
 }
 
 // improve this type later
-type RecipeWithIngredient = Recipe &
-  Ingredient & {
-    ingredient_name: string;
-    recipe_name: string;
-    recipe_id: number;
-    ingredient_id: number;
-  };
+// type RecipeWithIngredient = Recipe &
+//   Ingredient & {
+//     ingredient_name: string;
+//     recipe_name: string;
+//     recipe_id: number;
+//     ingredient_id: number;
+//   };
 
-interface Recipe {
-  id: number;
-  name: string;
-  instructions: string[];
-}
+// interface Recipe {
+//   id: number;
+//   name: string;
+//   instructions: string[];
+// }
+
+
+type RecipeWithIngredient = any;
+type Recipe = any;
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -136,6 +140,26 @@ app.get('/recipes', async (req, res) => {
 // });
 
 app.post('/recipes', async (req, res) => {
-  const insertResult = await pg<Recipe>('recipes').insert(req.body, ['id']);
-  res.status(201).json(insertResult[0]);
+  const body: {
+    name: string,
+    instructions: string[],
+    ingredients: {id: number, quantity: number}[]
+  } = req.body;
+  console.log('body', body)
+  const result = await pg.transaction((trx) => {
+    return trx<any>('recipes')
+      .insert({name: body.name, instructions: JSON.stringify(body.instructions)}, ['id'])
+      .then((insertResult) => {
+        console.log('insertResult', insertResult)
+        const recipeIngredients = body.ingredients.map((ingredient) => ({
+          recipe_id: insertResult[0].id,
+          ingredient_id: ingredient.id,
+          quantity_in_grams: ingredient.quantity,
+        }));
+        return trx('recipe_ingredients').insert(recipeIngredients);
+      });
+  })
+  console.log('result', result)
+  // const insertResult = await pg<Recipe>('recipes').insert(req.body, ['id']);
+  res.status(201);
 });
