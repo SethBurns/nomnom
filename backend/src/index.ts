@@ -3,6 +3,8 @@ import config from './knexfile';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import { salt } from './salt';
+import { createHash } from 'crypto';
 
 const pg = knex(config.development);
 
@@ -35,7 +37,6 @@ interface Ingredient {
 //   name: string;
 //   instructions: string[];
 // }
-
 
 type RecipeWithIngredient = any;
 type Recipe = any;
@@ -141,16 +142,17 @@ app.get('/recipes', async (req, res) => {
 
 app.post('/recipes', async (req, res) => {
   const body: {
-    name: string,
-    instructions: string[],
-    ingredients: {id: number, quantity: number}[]
+    name: string;
+    instructions: string[];
+    ingredients: { id: number; quantity: number }[];
   } = req.body;
-  console.log('body', body)
   const result = await pg.transaction((trx) => {
     return trx<any>('recipes')
-      .insert({name: body.name, instructions: JSON.stringify(body.instructions)}, ['id'])
+      .insert(
+        { name: body.name, instructions: JSON.stringify(body.instructions) },
+        ['id']
+      )
       .then((insertResult) => {
-        console.log('insertResult', insertResult)
         const recipeIngredients = body.ingredients.map((ingredient) => ({
           recipe_id: insertResult[0].id,
           ingredient_id: ingredient.id,
@@ -158,8 +160,28 @@ app.post('/recipes', async (req, res) => {
         }));
         return trx('recipe_ingredients').insert(recipeIngredients);
       });
-  })
-  console.log('result', result)
+  });
   // const insertResult = await pg<Recipe>('recipes').insert(req.body, ['id']);
   res.status(201);
+});
+
+interface User {
+  id: number,
+  user_name: string,
+  salted_hashed_password: string,
+  email: string,
+}
+
+app.post('/login', async (req, res) => {
+  const body: {
+    user_name: string;
+    password: string;
+  } = req.body;
+  const user = await pg<User>('users').where('user_name', body.user_name).first();
+  const salted_hashed_password = createHash('sha256').update(body.password + salt).digest('hex')
+  if (salted_hashed_password === user?.salted_hashed_password) {
+    res.send(200)
+  } else {
+    res.send(401)
+  }
 });
