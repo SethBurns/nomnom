@@ -38,7 +38,7 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
         setPostError('');
       }, 7000);
     }
-  }, [postError])
+  }, [postError]);
 
   function renderNoImage() {
     if (imgUrl === '') {
@@ -72,7 +72,7 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
         setPostError(`Something went wrong posting: ${err.message}`)
       );
     setErrorColor('text-green-500');
-    setPostError('Your ingredient has been added!')
+    setPostError('Your ingredient has been added!');
     setName('');
     setProtein('0');
     setCarbs('0');
@@ -106,6 +106,21 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
             type="text"
             placeholder="ex. White Rice"
             name="ingredientName"
+          ></input>
+        </div>
+        <div className="border-y border-black">
+          <label className="p-2 w-36 inline-block" htmlFor="massGrams">
+            Mass Grams:
+          </label>
+          <input
+            value={mass}
+            onChange={(e) => {
+              setMass(e.target.value);
+            }}
+            className="w-52 text-center"
+            type="number"
+            placeholder="weight of item in grams"
+            name="massGrams"
           ></input>
         </div>
         <div className="border-y border-black">
@@ -154,35 +169,21 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
           ></input>
         </div>
         <div className="border-y border-black">
-          <label className="p-2 w-36 inline-block" htmlFor="massGrams">
-            Mass Grams:
+          <label className="p-2 w-36 inline-block" htmlFor="fiberGrams">
+            Fiber Grams:
           </label>
           <input
-            value={mass}
+            value={fiber}
             onChange={(e) => {
-              setMass(e.target.value);
+              setFiber(e.target.value);
             }}
             className="w-52 text-center"
             type="number"
-            placeholder="weight of item in grams"
-            name="massGrams"
+            placeholder="grams of fiber in mass"
+            name="fiberGrams"
           ></input>
-          <div className="border-y border-black">
-            <label className="p-2 w-36 inline-block" htmlFor="fiberGrams">
-              Fiber Grams:
-            </label>
-            <input
-              value={fiber}
-              onChange={(e) => {
-                setFiber(e.target.value);
-              }}
-              className="w-52 text-center"
-              type="number"
-              placeholder="grams of fiber in mass"
-              name="fiberGrams"
-            ></input>
-          </div>
-          <div className="border-y border-black"></div>
+        </div>
+        <div className="border-y border-black">
           <label className="p-2 w-36 inline-block" htmlFor="calories">
             Calories:
           </label>
@@ -215,30 +216,34 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
         <button type="submit" className="border border-black p-1 m-2 rounded">
           Submit
         </button>
-        <p className={postError && `${errorColor} text-center animate-fadeInOut`}>{postError}</p>
+        <p
+          className={postError && `${errorColor} text-center animate-fadeInOut`}
+        >
+          {postError}
+        </p>
       </form>
       <div className="flex flex-col flex-wrap w-1/3 p-px m-3 border-2 border-solid border-black">
-            <h2 className="text-2xl text-center">Preview</h2>
-            <ul className="flex flex-col text-left">
-              <li className="p-2">Name: {name}</li>
-              <li className="p-2">Protein: {protein}g</li>
-              <li className="p-2">Carbs: {carbs}g</li>
-              <li className="p-2">Fat: {fat}g</li>
-              <li className="p-2">Mass: {mass}g</li>
-              <li className="p-2">Fiber: {fiber}g</li>
-              <li className="p-2">Calories: {calories} cals</li>
-              <li className="p-2 flex">
-                Image:
-                <div className='flex justify-center w-full'>
-                  <img
-                    className="w-36 h-36 inline-block"
-                    src={renderNoImage()}
-                    alt={name}
-                  />
-                </div>
-              </li>
-            </ul>
-          </div>
+        <h2 className="text-2xl text-center">Preview</h2>
+        <ul className="flex flex-col text-left">
+          <li className="p-2">Name: {name}</li>
+          <li className="p-2">Mass: {mass}g</li>
+          <li className="p-2">Protein: {protein}g</li>
+          <li className="p-2">Carbs: {carbs}g</li>
+          <li className="p-2">Fat: {fat}g</li>
+          <li className="p-2">Fiber: {fiber}g</li>
+          <li className="p-2">Calories: {calories} cals</li>
+          <li className="p-2 flex">
+            Image:
+            <div className="flex justify-center w-full">
+              <img
+                className="w-36 h-36 inline-block"
+                src={renderNoImage()}
+                alt={name}
+              />
+            </div>
+          </li>
+        </ul>
+      </div>
     </section>
   );
 }
