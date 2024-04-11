@@ -86,7 +86,7 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
   return (
     <section className="flex justify-evenly w-full">
       <form
-        className="flex flex-col flex-wrap w-1/2 p-px m-3 border-2 border-solid border-black items-center"
+        className="flex flex-col flex-wrap w-1/2 p-px m-3 bg-blue-400 border-2 border-solid border-black items-center"
         onSubmit={(e) => {
           handleSubmit(e);
         }}
