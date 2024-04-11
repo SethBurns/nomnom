@@ -84,9 +84,9 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
   }
 
   return (
-    <section className="flex justify-evenly w-full">
+    <section className="flex flex-col md:flex-row justify-evenly w-full">
       <form
-        className="flex flex-col flex-wrap w-1/2 p-px m-3 bg-blue-400 border-2 border-solid border-black items-center"
+        className="flex flex-col flex-wrap w-screen md:p-px md:w-1/2 md:m-3 bg-blue-400 border-2 border-solid border-black items-center"
         onSubmit={(e) => {
           handleSubmit(e);
         }}
@@ -102,7 +102,7 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
               console.log('h');
               setName(toTitleCase(e.target.value));
             }}
-            className="w-52 text-center"
+            className="w-52 text-center border border-black rounded-md"
             type="text"
             placeholder="ex. White Rice"
             name="ingredientName"
@@ -117,7 +117,7 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
             onChange={(e) => {
               setMass(e.target.value);
             }}
-            className="w-52 text-center"
+            className="w-52 text-center border border-black rounded-md"
             type="number"
             placeholder="weight of item in grams"
             name="massGrams"
@@ -132,7 +132,7 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
             onChange={(e) => {
               setProtein(e.target.value);
             }}
-            className="w-52 text-center"
+            className="w-52 text-center border border-black rounded-md"
             type="number"
             placeholder="grams of protein in mass"
             name="proteinGrams"
@@ -147,7 +147,7 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
             onChange={(e) => {
               setCarbs(e.target.value);
             }}
-            className="w-52 text-center"
+            className="w-52 text-center border border-black rounded-md"
             type="number"
             placeholder="grams of carbs in mass"
             name="carbGrams"
@@ -162,7 +162,7 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
             onChange={(e) => {
               setFat(e.target.value);
             }}
-            className="w-52 text-center"
+            className="w-52 text-center border border-black rounded-md"
             type="number"
             placeholder="grams of fat in mass"
             name="fatGrams"
@@ -177,7 +177,7 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
             onChange={(e) => {
               setFiber(e.target.value);
             }}
-            className="w-52 text-center"
+            className="w-52 text-center border border-black rounded-md"
             type="number"
             placeholder="grams of fiber in mass"
             name="fiberGrams"
@@ -192,7 +192,7 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
             onChange={(e) => {
               setCalories(e.target.value);
             }}
-            className="w-52 text-center"
+            className="w-52 text-center border border-black rounded-md"
             type="number"
             placeholder="calories in mass"
             name="calories"
@@ -207,7 +207,7 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
             onChange={(e) => {
               setImgUrl(e.target.value);
             }}
-            className="w-52 text-center"
+            className="w-52 text-center border border-black rounded-md"
             type="text"
             placeholder="url of image"
             name="imgUrl"
@@ -222,7 +222,7 @@ export function AddIngredientForm({ ingredients, setIngredients }: Props) {
           {postError}
         </p>
       </form>
-      <div className="flex flex-col flex-wrap w-1/3 p-px m-3 border-2 border-solid border-black">
+      <div className="flex flex-col flex-wrap md:w-1/3 md:p-px md:m-3 border-2 border-solid border-black">
         <h2 className="text-2xl text-center">Preview</h2>
         <ul className="flex flex-col text-left">
           <li className="p-2">Name: {name}</li>
