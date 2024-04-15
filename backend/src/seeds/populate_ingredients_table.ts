@@ -16,6 +16,10 @@ export async function seed(knex: Knex): Promise<void> {
       mass_in_grams: 100,
       fiber_in_grams: 1.6,
       calories: 14,
+      serving_label: '1 Stalk',
+      serving_mass_in_grams: 25,
+      volume_label: null,
+      volume_mass_in_grams: null,
       img_url:
         'https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Celery-stalks-and-leaves-7860193.jpg?quality=90&resize=556,505',
     },
@@ -27,6 +31,10 @@ export async function seed(knex: Knex): Promise<void> {
       mass_in_grams: 100,
       fiber_in_grams: 1.4,
       calories: 42,
+      serving_label: null,
+      serving_mass_in_grams: null,
+      volume_label: 'ml',
+      volume_mass_in_grams: 1,
       img_url:
         'https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Onion_on_White.JPG/1200px-Onion_on_White.JPG',
     },
@@ -38,6 +46,10 @@ export async function seed(knex: Knex): Promise<void> {
       mass_in_grams: 100,
       fiber_in_grams: 1.7,
       calories: 20,
+      serving_label: '1 Pepper',
+      serving_mass_in_grams: 50,
+      volume_label: 'Cup',
+      volume_mass_in_grams: 45,
       img_url:
         'https://hips.hearstapps.com/goodhousekeeping-uk/main/embedded/36870/green-peppers.jpg',
     },
@@ -49,6 +61,10 @@ export async function seed(knex: Knex): Promise<void> {
       mass_in_grams: 100,
       fiber_in_grams: 2.8,
       calories: 41,
+      serving_label: '1 Carrot',
+      serving_mass_in_grams: 55,
+      volume_label: 'Cup',
+      volume_mass_in_grams: 65,
       img_url:
         'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2Fycm90fGVufDB8fDB8fHww&w=1000&q=80',
     },
@@ -62,9 +78,9 @@ export async function seed(knex: Knex): Promise<void> {
   ]);
 
   await knex('recipe_ingredients').insert([
-    { recipe_id: 1, ingredient_id: 1, quantity_in_grams: 80 },
-    { recipe_id: 1, ingredient_id: 2, quantity_in_grams: 100 },
-    { recipe_id: 1, ingredient_id: 3, quantity_in_grams: 120 },
-    { recipe_id: 1, ingredient_id: 4, quantity_in_grams: 90 },
+    { recipe_id: 1, ingredient_id: 1, unit: 'Serving', unit_quantity: 2 },
+    { recipe_id: 1, ingredient_id: 2, unit: 'Cup', unit_quantity: 1 },
+    { recipe_id: 1, ingredient_id: 3, unit: 'Serving', unit_quantity: 1 },
+    { recipe_id: 1, ingredient_id: 4, unit: 'Tablespoon', unit_quantity: 6 },
   ]);
 }

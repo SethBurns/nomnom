@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Ingredient, postNewRecipe } from '../apiCalls';
+import Select from 'react-select';
+import ReactSelect from 'react-select';
 
 interface Props {
   ingredients: Array<Ingredient>;
@@ -18,6 +20,7 @@ export default function AddRecipeForm({ ingredients }: Props) {
     null,
   ]);
   const [newRecipeName, setNewRecipeName] = useState<string>('');
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
   const submitRecipe = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -96,7 +99,13 @@ export default function AddRecipeForm({ ingredients }: Props) {
             {newIngredients.map((ingredient, index) => {
               return (
                 <div key={index} className="flex justify-evenly">
-                  <select
+                  <Select
+                    options={ingredients.map(ingredient => ({}))}
+                    value={selectedOption}
+                    onChange={setSelectedOption}
+                  />
+                  {/* <select
+                    
                     defaultValue=""
                     className="border border-black rounded"
                     onChange={(e) => handleUpdateIngredientID(e, index)}
@@ -113,7 +122,7 @@ export default function AddRecipeForm({ ingredients }: Props) {
                         );
                       }),
                     ]}
-                  </select>
+                  </select> */}
                   <input
                     className="border border-black rounded"
                     type="number"
