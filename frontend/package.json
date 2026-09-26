@@ -20,12 +20,11 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && npm run tailwind",
+    "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "tailwind": "npx tailwindcss -i ./src/index.css -o ./public/output.css",
-    "tailwind:watch": "npx tailwindcss -i ./src/index.css -o ./public/output.css --watch"
+    "eject": "react-scripts eject"
   },
+  "proxy": "http://localhost:3000",
   "eslintConfig": {
     "extends": [
       "react-app",

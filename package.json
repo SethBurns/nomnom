@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "docker:start": "docker compose up -d"
+    "build": "npm --prefix backend run build && npm --prefix frontend run build",
+    "start": "npm --prefix backend start",
+    "dev:api": "npm --prefix backend run dev",
+    "dev:web": "PORT=3001 npm --prefix frontend start"
   },
   "repository": {
     "type": "git",

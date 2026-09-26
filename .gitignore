@@ -2,3 +2,4 @@ db/pgdata
 backend/dist
 **/node_modules
 .env
+backend/data/
