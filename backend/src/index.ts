@@ -1,10 +1,65 @@
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 import { DatabaseSync } from 'node:sqlite';
 
 const app = express();
 app.use(express.json({ limit: '1mb' }));
+app.set('trust proxy', 1);
+const host = process.env.HOST || '127.0.0.1';
+const password = process.env.NOMNOM_PASSWORD;
+const secret = process.env.SESSION_SECRET;
+if (host !== '127.0.0.1' && (!password || !secret)) {
+  throw new Error('NOMNOM_PASSWORD and SESSION_SECRET are required for network access.');
+}
+if (password && !secret) throw new Error('SESSION_SECRET is required when NOMNOM_PASSWORD is set.');
+const authCookie = 'nomnom_session';
+const sessionAge = 7 * 24 * 60 * 60 * 1000;
+const attempts = new Map<string, { count: number; since: number }>();
+app.get('/health', (_req, res) => res.json({ ok: true }));
+const digest = (value: string) => crypto.createHash('sha256').update(value).digest();
+function validPassword(value: string) {
+  return Boolean(password) && crypto.timingSafeEqual(digest(value), digest(password!));
+}
+function validSession(req: express.Request) {
+  if (!password) return true;
+  const token = req.headers.cookie?.split(';').map(part => part.trim())
+    .find(part => part.startsWith(authCookie + '='))?.slice(authCookie.length + 1);
+  if (!token) return false;
+  const [timestamp, signature] = token.split('.');
+  if (!/^\d+$/.test(timestamp) || !/^[0-9a-f]{64}$/.test(signature) ||
+      Date.now() - Number(timestamp) > sessionAge || Number(timestamp) > Date.now()) return false;
+  const expected = crypto.createHmac('sha256', secret!).update(timestamp).digest('hex');
+  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
+}
+app.get('/api/auth', (req, res) => res.json({ authenticated: validSession(req), protected: Boolean(password) }));
+app.post('/api/auth', (req, res) => {
+  const address = req.ip || 'unknown';
+  const record = attempts.get(address);
+  if (record && Date.now() - record.since < 15 * 60 * 1000 && record.count >= 5)
+    return res.status(429).json({ error: 'Too many attempts. Try again in 15 minutes.' });
+  if (typeof req.body?.password !== 'string' || !validPassword(req.body.password)) {
+    attempts.set(address, { count: record && Date.now() - record.since < 15 * 60 * 1000 ? record.count + 1 : 1,
+      since: record && Date.now() - record.since < 15 * 60 * 1000 ? record.since : Date.now() });
+    return res.status(401).json({ error: 'Incorrect password.' });
+  }
+  attempts.delete(address);
+  const timestamp = String(Date.now());
+  const signature = crypto.createHmac('sha256', secret!).update(timestamp).digest('hex');
+  res.cookie(authCookie, timestamp + '.' + signature, {
+    httpOnly: true, secure: host !== '127.0.0.1', sameSite: 'strict', maxAge: sessionAge, path: '/',
+  });
+  res.json({ authenticated: true });
+});
+app.post('/api/logout', (_req, res) => {
+  res.clearCookie(authCookie, { path: '/', sameSite: 'strict' });
+  res.status(204).send();
+});
+app.use('/api', (req, res, next) => {
+  if (!validSession(req)) return res.status(401).json({ error: 'Please sign in.' });
+  next();
+});
 const file = process.env.NOMNOM_DB_PATH || path.resolve(__dirname, '../data/nomnom.sqlite');
 fs.mkdirSync(path.dirname(file), { recursive: true });
 const db = new DatabaseSync(file);
@@ -215,5 +270,4 @@ if (fs.existsSync(frontend)) {
   app.get('*', (_req, res) => res.sendFile(path.join(frontend, 'index.html')));
 }
 const port = Number(process.env.PORT || 3000);
-const host = process.env.HOST || '127.0.0.1';
 app.listen(port, host, () => console.log(`NomNom running at http://${host}:${port}`));

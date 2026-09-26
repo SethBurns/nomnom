@@ -8,6 +8,8 @@ button { cursor: pointer; }
 .brand { font-size: 1.75rem; font-weight: 850; letter-spacing: -.08em; cursor: pointer; white-space: nowrap; }
 .brand-mark { color: #f6a74e; font-size: .6em; vertical-align: super; margin-left: .4rem; }
 .topbar nav { display: flex; gap: .3rem; }
+.logout { color: #c3d5d7; border: 1px solid #ffffff55; background: transparent; border-radius: 8px; padding: .55rem .75rem; white-space: nowrap; }
+.logout:hover { color: white; border-color: white; }
 .topbar nav button { border: 0; background: transparent; color: #c3d5d7; padding: 1.3rem 1rem; border-bottom: 3px solid transparent; }
 .topbar nav button:hover, .topbar nav .nav-active { color: white; border-bottom-color: #ffb85d; }
 .main-content { max-width: 1240px; margin: auto; padding: 2rem 1.25rem 4rem; }
@@ -79,6 +81,14 @@ input:focus, select:focus, textarea:focus { outline: 2px solid #2a8078; outline-
 .alert.error { background: #fff0ef; color: #913b39; }
 .alert.success { background: #e9f6ef; color: #235e48; }
 .inline-error { color: #913b39; }
+.login-screen { min-height: 100vh; background: #12343b; display: grid; place-items: center; padding: 1rem; }
+.login-screen > p { color: white; }
+.login-card { width: min(100%, 420px); background: #fff; border-radius: 20px; padding: 2rem; box-shadow: 0 20px 50px #071b2180; }
+.login-card .brand { color: #12343b; margin-bottom: 2rem; }
+.login-card h1 { font-size: 2.4rem; }
+.login-card p { color: #61767a; margin: 1rem 0 1.5rem; }
+.login-card label { margin-bottom: 1rem; }
+.login-card .primary { width: 100%; }
 .divider { text-align: center; border-top: 1px solid #e0e9e5; margin: 1.8rem 0 1.3rem; padding-top: 1rem; color: #657b7b; font-size: .9rem; }
 .usda-results { max-height: 22rem; overflow: auto; border: 1px solid #dce6e2; border-radius: 12px; }
 .usda-result { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .8rem; border-bottom: 1px solid #e9eeeb; }
@@ -91,6 +101,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid #2a8078; outline-
 }
 @media (max-width: 620px) {
   .topbar { display: block; padding: .7rem 1rem 0; }
+  .topbar .logout { position: absolute; right: 1rem; top: .7rem; }
   .topbar nav { justify-content: space-between; }
   .topbar nav button { padding: .85rem .45rem; font-size: .88rem; }
   .main-content { padding: 1.5rem 1rem 3rem; }

@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: nomnom-journal
+    runtime: node
+    plan: starter
+    region: oregon
+    buildCommand: npm ci --prefix backend && npm ci --prefix frontend && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: NOMNOM_DB_PATH
+        value: /var/data/nomnom.sqlite
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: NOMNOM_PASSWORD
+        sync: false
+    disk:
+      name: nomnom-data
+      mountPath: /var/data
+      sizeGB: 1

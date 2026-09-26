@@ -53,12 +53,16 @@ async function api<T>(url: string, options?: RequestInit): Promise<T> {
   });
   if (!response.ok) {
     const result = await response.json().catch(() => ({}));
-    throw new Error(result.error || 'Something went wrong. Please try again.');
+    const error = new Error(result.error || 'Something went wrong. Please try again.') as Error & { status: number };
+    error.status = response.status;
+    throw error;
   }
   return response.status === 204 ? undefined as T : response.json();
 }
 
 function App() {
+  const [authenticated, setAuthenticated] = useState<boolean | null>(null);
+  const [protectedJournal, setProtectedJournal] = useState(false);
   const [view, setView] = useState<View>('diary');
   const [date, setDate] = useState(dateToday);
   const [foods, setFoods] = useState<Food[]>([]);
@@ -68,21 +72,35 @@ function App() {
   const [notice, setNotice] = useState('');
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    api<{ authenticated: boolean; protected: boolean }>('/auth').then(result => {
+      setProtectedJournal(result.protected); setAuthenticated(result.authenticated);
+    })
+      .catch(e => { setError((e as Error).message); setAuthenticated(false); });
+  }, []);
   const refresh = useCallback(async () => {
+    if (!authenticated) return;
     setError('');
     try {
       const [foodData, recipeData, dayData] = await Promise.all([
         api<Food[]>('/ingredients'), api<Recipe[]>('/recipes'), api<Day>('/log?date=' + date),
       ]);
       setFoods(foodData); setRecipes(recipeData); setDay(dayData);
-    } catch (e) { setError((e as Error).message); }
+    } catch (e) {
+      if ((e as Error & { status?: number }).status === 401) setAuthenticated(false);
+      else setError((e as Error).message);
+    }
     finally { setLoading(false); }
-  }, [date]);
+  }, [date, authenticated]);
   useEffect(() => { refresh(); }, [refresh]);
   const act = async (action: () => Promise<unknown>, message: string): Promise<boolean> => {
     setError(''); setNotice('');
     try { await action(); await refresh(); setNotice(message); return true; }
-    catch (e) { setError((e as Error).message); return false; }
+    catch (e) {
+      if ((e as Error & { status?: number }).status === 401) setAuthenticated(false);
+      else setError((e as Error).message);
+      return false;
+    }
   };
   const changeDate = (days: number) => {
     const [year, month, dateNumber] = date.split('-').map(Number);
@@ -90,6 +108,8 @@ function App() {
     setDate([next.getFullYear(), String(next.getMonth() + 1).padStart(2, '0'), String(next.getDate()).padStart(2, '0')].join('-'));
   };
 
+  if (authenticated === null) return <div className="login-screen"><p>Opening NomNom…</p></div>;
+  if (!authenticated) return <Login onSuccess={() => setAuthenticated(true)} />;
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -101,6 +121,9 @@ function App() {
               {item === 'diary' ? 'Daily diary' : item === 'foods' ? 'My foods' : 'Recipes'}
             </button>)}
         </nav>
+        {protectedJournal && <button className="logout" onClick={async () => {
+          await api('/logout', { method: 'POST' }); setAuthenticated(false); setDay(null);
+        }}>Sign out</button>}
       </header>
       <main className="main-content">
         {error && <div className="alert error" role="alert">{error}</div>}
@@ -114,6 +137,28 @@ function App() {
       </main>
     </div>
   );
+}
+
+function Login({ onSuccess }: { onSuccess: () => void }) {
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault(); setBusy(true); setError('');
+    try {
+      await api('/auth', { method: 'POST', body: JSON.stringify({ password }) });
+      setPassword(''); onSuccess();
+    } catch (e) { setError((e as Error).message); }
+    finally { setBusy(false); }
+  };
+  return <div className="login-screen"><form className="login-card" onSubmit={submit}>
+    <div className="brand">nOmNoM<span className="brand-mark">●</span></div>
+    <h1>Your food journal</h1><p>Sign in to see your diary.</p>
+    <label>Password<input type="password" autoComplete="current-password" required value={password}
+      onChange={e => setPassword(e.target.value)} /></label>
+    {error && <p className="inline-error" role="alert">{error}</p>}
+    <button className="primary" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
+  </form></div>;
 }
 
 type Action = (request: () => Promise<unknown>, message: string) => Promise<boolean>;
