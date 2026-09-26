@@ -32,8 +32,11 @@ db.exec(`
 `);
 
 const macros = ['calories', 'protein_in_grams', 'carbs_in_grams', 'fat_in_grams', 'fiber_in_grams'] as const;
-const micros = ['vitamin_a_mcg', 'vitamin_c_mg', 'vitamin_d_mcg', 'vitamin_b12_mcg', 'folate_mcg',
-  'calcium_mg', 'iron_mg', 'magnesium_mg', 'potassium_mg', 'sodium_mg', 'zinc_mg'] as const;
+const micros = ['vitamin_a_mcg', 'vitamin_c_mg', 'vitamin_d_mcg', 'vitamin_e_mg', 'vitamin_k_mcg',
+  'thiamin_mg', 'riboflavin_mg', 'niacin_mg', 'pantothenic_acid_mg', 'vitamin_b6_mg',
+  'vitamin_b12_mcg', 'folate_mcg', 'choline_mg', 'calcium_mg', 'copper_mg', 'iron_mg',
+  'magnesium_mg', 'manganese_mg', 'phosphorus_mg', 'potassium_mg', 'selenium_mcg',
+  'sodium_mg', 'zinc_mg'] as const;
 const keys = [...macros, ...micros];
 type Nutrients = Record<string, number | null>;
 type Food = { id: number; name: string; mass_in_grams: number; img_url: string | null; micros: string } &
@@ -109,9 +112,12 @@ app.post('/api/usda/import', async (req, res) => {
     const nutrientIds: Record<string, number[]> = {
       calories: [1008, 2047, 2048], protein_in_grams: [1003], carbs_in_grams: [1005],
       fat_in_grams: [1004], fiber_in_grams: [1079], vitamin_a_mcg: [1106],
-      vitamin_c_mg: [1162], vitamin_d_mcg: [1114], vitamin_b12_mcg: [1178],
-      folate_mcg: [1177], calcium_mg: [1087], iron_mg: [1089], magnesium_mg: [1090],
-      potassium_mg: [1092], sodium_mg: [1093], zinc_mg: [1095],
+      vitamin_c_mg: [1162], vitamin_d_mcg: [1114], vitamin_e_mg: [1109], vitamin_k_mcg: [1185],
+      thiamin_mg: [1165], riboflavin_mg: [1166], niacin_mg: [1167], pantothenic_acid_mg: [1170],
+      vitamin_b6_mg: [1175], vitamin_b12_mcg: [1178], folate_mcg: [1177], choline_mg: [1180],
+      calcium_mg: [1087], copper_mg: [1098], iron_mg: [1089], magnesium_mg: [1090],
+      manganese_mg: [1101], phosphorus_mg: [1091], potassium_mg: [1092],
+      selenium_mcg: [1103], sodium_mg: [1093], zinc_mg: [1095],
     };
     const values: Nutrients = {};
     for (const key of keys) {
