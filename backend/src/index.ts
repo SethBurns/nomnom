@@ -135,19 +135,23 @@ app.get('/api/health', (_req, res) => res.json({ ok: true }));
 app.get('/api/ingredients', (_req, res) => res.json(foods()));
 const usdaKey = process.env.FDC_API_KEY || 'DEMO_KEY';
 const usdaUrl = 'https://api.nal.usda.gov/fdc/v1';
-async function usda(endpoint: string) {
+async function usda(endpoint: string, body?: object) {
   const response = await fetch(`${usdaUrl}${endpoint}${endpoint.includes('?') ? '&' : '?'}api_key=${encodeURIComponent(usdaKey)}`,
-    { signal: AbortSignal.timeout(10000) });
+    { signal: AbortSignal.timeout(10000), ...(body ? { method: 'POST',
+      headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : {}) });
   if (!response.ok) throw new Error(response.status === 429 ? 'USDA search limit reached. Try later or set your own FDC_API_KEY.' : 'USDA food search is unavailable.');
   return response.json();
 }
 app.get('/api/usda/search', async (req, res) => {
   const query = String(req.query.q || '').trim();
+  const category = req.query.category === 'branded' ? 'branded' : 'reference';
   if (query.length < 2 || query.length > 100) return bad(res, 'Enter at least two characters.');
   try {
-    const data = await usda('/foods/search?query=' + encodeURIComponent(query) + '&pageSize=15') as
+    const data = await usda('/foods/search', { query, pageSize: 25,
+      dataType: category === 'branded' ? ['Branded'] : ['Foundation', 'Survey (FNDDS)', 'SR Legacy'] }) as
       { foods?: { fdcId: number; description: string; dataType: string; brandOwner?: string }[] };
-    res.json((data.foods || []).map(food => ({
+    const priority: Record<string, number> = { Foundation: 0, 'Survey (FNDDS)': 1, 'SR Legacy': 2 };
+    res.json((data.foods || []).sort((a, b) => (priority[a.dataType] ?? 3) - (priority[b.dataType] ?? 3)).map(food => ({
       id: food.fdcId, name: food.description, type: food.dataType, brand: food.brandOwner || null,
     })));
   } catch (error) { bad(res, (error as Error).message, 502); }

@@ -244,12 +244,13 @@ function Foods({ foods, act }: { foods: Food[]; act: Action }) {
   const [values, setValues] = useState<Record<string, string>>({});
   const [search, setSearch] = useState('');
   const [usdaQuery, setUsdaQuery] = useState('');
+  const [usdaCategory, setUsdaCategory] = useState<'reference' | 'branded'>('reference');
   const [usdaResults, setUsdaResults] = useState<{ id: number; name: string; type: string; brand: string | null }[]>([]);
   const [searching, setSearching] = useState(false);
   const [usdaError, setUsdaError] = useState('');
   const searchUsda = async (e: React.FormEvent) => {
     e.preventDefault(); setSearching(true); setUsdaError('');
-    try { setUsdaResults(await api('/usda/search?q=' + encodeURIComponent(usdaQuery))); }
+    try { setUsdaResults(await api('/usda/search?q=' + encodeURIComponent(usdaQuery) + '&category=' + usdaCategory)); }
     catch (e) { setUsdaError((e as Error).message); }
     finally { setSearching(false); }
   };
@@ -269,10 +270,13 @@ function Foods({ foods, act }: { foods: Food[]; act: Action }) {
     <div className="page-heading"><div><p className="eyebrow">Build your food library</p><h1>My foods</h1></div></div>
     <div className="two-column">
       <section className="panel"><h2>Find a food</h2>
-        <p className="muted">Search USDA FoodData Central and save an item with its available nutrient values. Check the exact product or preparation before logging it.</p>
+        <p className="muted">Search USDA FoodData Central. Detailed foods usually have more vitamins and minerals; branded foods reflect what manufacturers provide on labels. Check the exact preparation or product before logging it.</p>
         <form className="form-row" onSubmit={searchUsda}>
           <label className="grow">Search foods<input required minLength={2} value={usdaQuery}
             onChange={e => setUsdaQuery(e.target.value)} placeholder="e.g. banana, whole milk" /></label>
+          <label>Food data<select value={usdaCategory} onChange={e => { setUsdaCategory(e.target.value as 'reference' | 'branded'); setUsdaResults([]); }}>
+            <option value="reference">Detailed foods</option><option value="branded">Branded products</option>
+          </select></label>
           <button className="primary" disabled={searching}>{searching ? 'Searching…' : 'Search'}</button>
         </form>
         {usdaError && <p className="inline-error" role="alert">{usdaError}</p>}
@@ -283,6 +287,7 @@ function Foods({ foods, act }: { foods: Food[]; act: Action }) {
               if (await act(() => api('/usda/import', { method: 'POST', body: JSON.stringify({ id: result.id }) }),
                 'USDA food saved to your library.')) setUsdaResults([]);
             }}>Save</button></div>)}</div>}
+        <p className="hint">Source: USDA FoodData Central. Missing nutrients stay unknown; they are never counted as zero.</p>
         <div className="divider">or enter a food yourself</div>
         <h2>Add a food</h2>
         <p className="muted">Use a nutrition label or trusted food data. Enter amounts for the reference weight; leave unknown values blank.</p>
